@@ -75,9 +75,6 @@ def main():
         elif sys.argv[2] == "command":
             argument = sys.argv[3]
             # # print("Command to execute: "+argument)
-        elif sys.argv[2] == "listen":
-            # # print("Listening for Ring")
-            listenUp()
         else:
             # # print("argument 3 is not valid, say either command, message or listen")
             exit(-1)
@@ -211,4 +208,3 @@ if __name__ == '__main__':
     finally:
         # sendCommand('ATE1', has_resp=False)
         pass
-
