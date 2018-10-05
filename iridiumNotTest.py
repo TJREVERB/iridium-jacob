@@ -4,6 +4,7 @@ import time
 import sys
 
 debug = True
+bool transmitting = False
 
 global ser
 
@@ -103,7 +104,7 @@ def listenUp():
     signalStrength = 0
     ringSetup = 0
     iteration = 0
-    while ringSetup != 2 :
+    while ringSetup != 2 and transmitting == False:
         ring = ser.readline().decode('UTF-8')
         # # print(ring)
         if "SBDRING" in ring:
@@ -148,6 +149,7 @@ def listenUp():
 
 def send(thingToSend):
     # try to send until it sends
+    transmitting = True
     startTime = time.time()
     alert = 2
     while alert == 2:
@@ -195,6 +197,7 @@ def send(thingToSend):
 
         #if debug:
             # # #print("alert: {}".format(alert))
+    transmitting = False
     exit(-1)
 
 if __name__ == '__main__':
