@@ -4,7 +4,6 @@ import time
 import sys
 
 debug = True
-transmitting = 0
 
 global ser
 
@@ -76,6 +75,9 @@ def main():
         elif sys.argv[2] == "command":
             argument = sys.argv[3]
             # # print("Command to execute: "+argument)
+        elif sys.argv[2] == "listen":
+            # # print("Listening for Ring")
+            listenUp()
         else:
             # # print("argument 3 is not valid, say either command, message or listen")
             exit(-1)
@@ -104,7 +106,7 @@ def listenUp():
     signalStrength = 0
     ringSetup = 0
     iteration = 0
-    while ringSetup != 2 and transmitting == 0:
+    while ringSetup != 2 :
         ring = ser.readline().decode('UTF-8')
         # # print(ring)
         if "SBDRING" in ring:
@@ -149,7 +151,6 @@ def listenUp():
 
 def send(thingToSend):
     # try to send until it sends
-    transmitting = 1
     startTime = time.time()
     alert = 2
     while alert == 2:
@@ -197,7 +198,6 @@ def send(thingToSend):
 
         #if debug:
             # # #print("alert: {}".format(alert))
-    transmitting = 0
     exit(-1)
 
 if __name__ == '__main__':
@@ -211,3 +211,4 @@ if __name__ == '__main__':
     finally:
         # sendCommand('ATE1', has_resp=False)
         pass
+
