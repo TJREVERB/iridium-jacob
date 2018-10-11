@@ -4,8 +4,7 @@ import time
 import sys
 
 debug = True
-
-global ser
+messageQueue = deque()
 
 def sendCommand(cmd):
     if cmd[-1] != '\r\n':
@@ -14,9 +13,25 @@ def sendCommand(cmd):
         # # # print("Sending command: {}".format(cmd))
     ser.write(cmd.encode('UTF-8'))
     ser.flush()
-    cmd_echo = ser.readline()
+    cmd_echo = threading.Thread(target=serialListen())
     #if debug:
         # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # print("Echoed: " + cmd_echo.decode('UTF-8'))
+
+def serialListen():
+    global messageQueue
+    while True:
+        line = ser.readline().decode('UTF-8')
+        if line == 'SBDRING':
+            listenUp()
+        else:
+            messageQueue.enque(line)
+
+
+def serialRead():
+    while len(messageQueue) < 1:
+        time.sleep(0.5)
+    return messageQueue.pop()
+
 def setup(port):
     global ser
     ser = serial.Serial(port=port, baudrate = 19200, timeout = 15)
@@ -158,18 +173,17 @@ def send(thingToSend):
         #signal = ser.readline().decode('UTF-8')#empty line
         sendCommand("AT+CSQF")
 
-        signal = ser.readline().decode('UTF-8')#empty line
-        signal = ser.readline().decode('UTF-8')
+        signal = threading.Thread(target=listenUp()).start()
         # # print("last known signal strength: "+signal)
         # prepare message
         sendCommand("AT+SBDWT=" + thingToSend)
-        ok = ser.readline().decode('UTF-8') # get the 'OK'
-        ser.readline().decode('UTF-8') # get the empty line
+        ok = threading.Thread(target=listenUp()).start() # get the 'OK'
+        threading.Thread(target=listenUp()).start()
 
         # send message
         sendCommand("AT+SBDI")
         
-        resp = ser.readline().decode('UTF-8') # get the empty line
+        resp = threading.Thread(target=listenUp()).start()
         resp = resp.replace(",", " ").split(" ")
         startTime = time.time()
         currTime = startTime
@@ -178,7 +192,7 @@ def send(thingToSend):
         #signal = ser.readline().decode('UTF-8')#empty line
         while len(resp) > 0 and len(resp) <= 2:
             # # print(resp)
-            resp = ser.readline().decode('UTF-8')    
+            resp = threading.Thread(target=listenUp()).start()
             resp = resp.replace(",", " ").split(" ")
             curTime = time.time()
             if (curTime-startTime)>30:
