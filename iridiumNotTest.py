@@ -2,6 +2,7 @@ import threading
 import serial
 import time
 import sys
+import deque
 
 debug = True
 messageQueue = deque()
