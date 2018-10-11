@@ -1,4 +1,4 @@
-import threading
+
 import serial
 import time
 import sys
@@ -77,7 +77,7 @@ def main():
             # # print("Command to execute: "+argument)
         elif sys.argv[2] == "listen":
             # # print("Listening for Ring")
-            threading.Thread(target=listenUp.start())
+            listenUp()
         else:
             # # print("argument 3 is not valid, say either command, message or listen")
             exit(-1)
@@ -95,11 +95,11 @@ def main():
     
     if ' ' not in argument:
         # # print("Sending command: "+argument)
-        threading.Thread(target=sendCommand(argument))
+        sendCommand(argument)
         exit(-1)
     if ' ' not in command:
         # # print('Sending Message: '+command)
-        threading.Thread(target=send(command))
+        send(command)
 def listenUp():
     sendCommand("AT+SBDMTA=1")
     ser = serial.Serial(port=port, baudrate = 19200, timeout = 1)
