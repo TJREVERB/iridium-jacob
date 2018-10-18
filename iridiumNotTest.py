@@ -126,7 +126,7 @@ def main():
 def listenUp():
     print ("listenUp starting")
     sendCommand("AT+SBDMTA=1")
-    ser = serial.Serial(port=port, baudrate = 19200, timeout = 1)
+    # ser = serial.Serial(port=port, baudrate = 19200, timeout = 1)
     signalStrength = 0
     ringSetup = 0
     iteration = 0
