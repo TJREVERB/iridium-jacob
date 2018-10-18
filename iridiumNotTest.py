@@ -59,7 +59,7 @@ def doTheOK():
     # show signal quality
     sendCommand('AT+CSQ')
     resp = threading.Thread(target=serialListen()).start()
-    ok = threading.Thread(target=serialListen()).start()
+    ok = threading.Thread(target=serial()).start()
     # # # print("resp: {}".format(repr(resp)))
     if 'OK' not in ok:
         # # print('Unexpected "OK" response: ' + ok)
@@ -70,7 +70,7 @@ def doTheOK():
     ser.write("AT+SBDREG? \r\n".encode('UTF-8'))
     while True:
         try:
-            regStat = int(threading.Thread(target=serialListen()).start().split(":")[1])
+            regStat = int(ser.readline().decode('UTF-8').split(":")[1])
             break
         except:
             continue
