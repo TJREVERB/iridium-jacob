@@ -31,7 +31,7 @@ def serialListen():
 
 
 def serialRead():
-    while messageQueue.count() < 1:
+    while len(messageQueue) < 1:
         time.sleep(0.5)
     return messageQueue.popleft()
 
