@@ -26,6 +26,8 @@ def serialListen():
             listenUp()
         else:
             messageQueue.append(line)
+            print "line added"
+            print "starting serialRead"
             threading.Thread(target=serialRead())
 
 
@@ -33,7 +35,9 @@ def serialListen():
 def serialRead():
     while len(messageQueue) < 1:
         time.sleep(0.5)
+        print "waiting"
     return messageQueue.popleft()
+    print "pop"
 
 def setup(port):
     global ser
