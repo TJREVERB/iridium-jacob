@@ -15,7 +15,7 @@ def sendCommand(cmd):
         # # # print("Sending command: {}".format(cmd))
     ser.write(cmd.encode('UTF-8'))
     ser.flush()
-    cmd_echo = threading.Thread(target=serialListen()).start()
+    cmd_echo = threading.Thread(target=serialListen())
     #if debug:
         # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # print("Echoed: " + cmd_echo.decode('UTF-8'))
 
