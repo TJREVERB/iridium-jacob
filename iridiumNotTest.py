@@ -8,7 +8,7 @@ debug = True
 messageQueue = collections.deque([])
 
 def sendCommand(cmd):
-    print "sendCommand starting"
+    print ("sendCommand starting")
     if cmd[-1] != '\r\n':
         cmd += '\r\n'
     #if debug:
@@ -27,28 +27,28 @@ def serialListen():
             listenUp()
         else:
             messageQueue.append(line)
-            print "line added"
+            print ("line added")
             threading.Thread(target=serialRead()).start()
 
 
 
 def serialRead():
-    print "starting serialRead"
+    print ("starting serialRead")
     while len(messageQueue) < 1:
         time.sleep(0.5)
-        print "waiting"
+        print ("waiting")
     messageQueue.popleft()
-    print "pop"
+    print ("pop")
 
 def setup(port):
-    print "setup starting"
+    print ("setup starting")
     global ser
     ser = serial.Serial(port=port, baudrate = 19200, timeout = 15)
     ser.flush()
     doTheOK()
 
 def doTheOK():
-    print "doTheOK starting"
+    print ("doTheOK starting")
     sendCommand("AT")
     resp = threading.Thread(target=serialListen()).start()
     # # print (resp)
@@ -79,7 +79,7 @@ def doTheOK():
          sendCommand("AT+SBDREG")
     
 def main():
-    print "main starting"
+    print ("main starting")
     argument = ' '
     command = ' '
     global port
@@ -174,7 +174,7 @@ def listenUp():
         # # print("listening...")
 
 def send(thingToSend):
-    print "send starting"
+    print ("send starting")
     # try to send until it sends
     startTime = time.time()
     alert = 2
