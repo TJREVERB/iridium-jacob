@@ -50,8 +50,7 @@ def setup(port):
 def doTheOK():
     print "doTheOK starting"
     sendCommand("AT")
-    ser.readline().decode('UTF-8') # get the empty line
-    resp = ser.readline().decode('UTF-8')
+    resp = threading.Thread(target=serialListen()).start()
     # # print (resp)
     if 'OK' not in resp:
         # # print("Echo"+resp)
@@ -59,10 +58,8 @@ def doTheOK():
 
     # show signal quality
     sendCommand('AT+CSQ')
-    ser.readline().decode('UTF-8') # get the empty line
-    resp = ser.readline().decode('UTF-8')
-    ser.readline().decode('UTF-8') # get the empty line
-    ok = ser.readline().decode('UTF-8') # get the 'OK'
+    resp = threading.Thread(target=serialListen()).start()
+    ok = threading.Thread(target=serialListen()).start()
     # # # print("resp: {}".format(repr(resp)))
     if 'OK' not in ok:
         # # print('Unexpected "OK" response: ' + ok)
@@ -73,7 +70,7 @@ def doTheOK():
     ser.write("AT+SBDREG? \r\n".encode('UTF-8'))
     while True:
         try:
-            regStat = int(ser.readline().decode('UTF-8').split(":")[1])
+            regStat = int(threading.Thread(target=serialListen()).start().split(":")[1])
             break
         except:
             continue
