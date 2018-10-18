@@ -1,3 +1,4 @@
+import collections
 import threading
 import serial
 import time
@@ -5,7 +6,7 @@ import sys
 import deque
 
 debug = True
-messageQueue = deque()
+messageQueue = collections.deque([])
 
 def sendCommand(cmd):
     if cmd[-1] != '\r\n':
@@ -25,13 +26,15 @@ def serialListen():
         if line == 'SBDRING':
             listenUp()
         else:
-            messageQueue.enque(line)
+            messageQueue.append(line)
+            serialRead()
+            
 
 
 def serialRead():
-    while len(messageQueue) < 1:
+    while messageQueue.count() < 1:
         time.sleep(0.5)
-    return messageQueue.pop()
+    return messageQueue.popleft()
 
 def setup(port):
     global ser
