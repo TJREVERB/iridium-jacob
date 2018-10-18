@@ -26,7 +26,7 @@ def serialListen():
             listenUp()
         else:
             messageQueue.append(line)
-            serialRead()
+            threading.Thread(target=serialRead())
 
 
 
