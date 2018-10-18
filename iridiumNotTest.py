@@ -3,7 +3,6 @@ import threading
 import serial
 import time
 import sys
-import deque
 
 debug = True
 messageQueue = collections.deque([])
@@ -28,7 +27,7 @@ def serialListen():
         else:
             messageQueue.append(line)
             serialRead()
-            
+
 
 
 def serialRead():
