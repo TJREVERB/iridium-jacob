@@ -8,6 +8,7 @@ debug = True
 messageQueue = collections.deque([])
 
 def sendCommand(cmd):
+    print "sendCommand starting"
     if cmd[-1] != '\r\n':
         cmd += '\r\n'
     #if debug:
@@ -91,7 +92,7 @@ def main():
         port = '/dev/ttyUSB0'
     setup(port)
     if len(sys.argv) < 4:
-        # # print("not enought args")
+        # # print("not enough args")
         exit(-1)
     else:
         if sys.argv[2] == "message":
