@@ -124,7 +124,7 @@ def main():
         # # print('Sending Message: '+command)
         threading.Thread(target=send(command)).start()
 def listenUp():
-    print "listenUp starting"
+    print ("listenUp starting")
     sendCommand("AT+SBDMTA=1")
     ser = serial.Serial(port=port, baudrate = 19200, timeout = 1)
     signalStrength = 0
