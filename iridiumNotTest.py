@@ -27,25 +27,27 @@ def serialListen():
         else:
             messageQueue.append(line)
             print "line added"
-            print "starting serialRead"
             threading.Thread(target=serialRead())
 
 
 
 def serialRead():
+    print "starting serialRead"
     while len(messageQueue) < 1:
         time.sleep(0.5)
         print "waiting"
-    return messageQueue.popleft()
+    messageQueue.popleft()
     print "pop"
 
 def setup(port):
+    print "setup starting"
     global ser
     ser = serial.Serial(port=port, baudrate = 19200, timeout = 15)
     ser.flush()
     doTheOK()
 
 def doTheOK():
+    print "doTheOK starting"
     sendCommand("AT")
     ser.readline().decode('UTF-8') # get the empty line
     resp = ser.readline().decode('UTF-8')
@@ -79,6 +81,7 @@ def doTheOK():
          sendCommand("AT+SBDREG")
     
 def main():
+    print "main starting"
     argument = " "
     command = " "
     global port
@@ -123,6 +126,7 @@ def main():
         # # print('Sending Message: '+command)
         threading.Thread(target=send(command)).start()
 def listenUp():
+    print "listenUp starting"
     sendCommand("AT+SBDMTA=1")
     ser = serial.Serial(port=port, baudrate = 19200, timeout = 1)
     signalStrength = 0
@@ -172,6 +176,7 @@ def listenUp():
         # # print("listening...")
 
 def send(thingToSend):
+    print "send starting"
     # try to send until it sends
     startTime = time.time()
     alert = 2
