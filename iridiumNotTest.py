@@ -14,7 +14,7 @@ def sendCommand(cmd):
         # # # print("Sending command: {}".format(cmd))
     ser.write(cmd.encode('UTF-8'))
     ser.flush()
-    cmd_echo = threading.Thread(target=serialListen())
+    cmd_echo = threading.Thread(target=serialListen()).start()
     #if debug:
         # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # print("Echoed: " + cmd_echo.decode('UTF-8'))
 
@@ -27,7 +27,7 @@ def serialListen():
         else:
             messageQueue.append(line)
             print "line added"
-            threading.Thread(target=serialRead())
+            threading.Thread(target=serialRead()).start()
 
 
 
@@ -82,8 +82,8 @@ def doTheOK():
     
 def main():
     print "main starting"
-    argument = " "
-    command = " "
+    argument = ' '
+    command = ' '
     global port
     if len(sys.argv) > 1:
         port = sys.argv[1]
@@ -102,7 +102,7 @@ def main():
             # # print("Command to execute: "+argument)
         elif sys.argv[2] == "listen":
             # # print("Listening for Ring")
-            threading.Thread(target=listenUp.start())
+            threading.Thread(target=serialListen()).start()
         else:
             # # print("argument 3 is not valid, say either command, message or listen")
             exit(-1)
