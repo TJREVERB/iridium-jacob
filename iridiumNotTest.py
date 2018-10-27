@@ -1,24 +1,24 @@
 import collections
-import threading
-import serial
-import time
+import logging
 import sys
+import threading
+import time
 
-debug = True
+import serial
+
 messageQueue = collections.deque([])
+logger = logging.getLogger("iridium")
+
 
 def sendCommand(cmd):
-    print ("sendCommand starting")
+    logger.debug("sendCommand starting")
     if cmd[-1] != '\r\n':
         cmd += '\r\n'
-    #if debug:
-        # # # print("Sending command: {}".format(cmd))
+    logger.debug("Sending command: {}".format(cmd))
     ser.write(cmd.encode('UTF-8'))
     ser.flush()
-    # cmd_echo = threading.Thread(target=serialListen())
     cmd_echo = serialRead()
-    #if debug:
-        # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # print("Echoed: " + cmd_echo.decode('UTF-8'))
+
 
 def serialListen():
     global messageQueue
@@ -28,223 +28,142 @@ def serialListen():
             listenUp()
         else:
             messageQueue.append(line)
-            print ("line added")
-            # threading.Thread(target=serialRead()).start()
-
+            logger.debug("line added")
 
 
 def serialRead():
-    print ("starting serialRead")
+    logger.debug("starting serialRead")
     while len(messageQueue) < 1:
         time.sleep(0.5)
-        print ("waiting")
-    print ("pop: {}".format(messageQueue))
+        logger.debug("waiting")
+    logger.debug("pop: {}".format(messageQueue))
     return messageQueue.popleft()
 
+
 def setup(port):
-    print ("setup starting")
+    logger.debug("setup starting")
     global ser
-    # ser = serial.Serial(port=port, baudrate = 19200, timeout = 15)
-    ser = serial.Serial(port=port, baudrate = 19200)
+    ser = serial.Serial(port=port, baudrate=19200)
     ser.flush()
     # doTheOK()
 
-def doTheOK():
-    print ("doTheOK starting")
-    sendCommand("AT")
-    print("gigathonk")
-    # resp = threading.Thread(target=serialListen()).start()
-    resp = serialRead()
-    # # print (resp)
-    if 'OK' not in resp:
-        print("Echo"+resp)
-        exit(-1)
 
+def doTheOK():
+    logger.debug("doTheOK starting")
+    sendCommand("AT")
+    logger.debug("gigathonk")
+    serialRead()  # get empty line
+    resp = serialRead()
+    logger.debug(resp)
+    if 'OK' not in resp:
+        logger.error("OK:" + resp)
+        raise RuntimeError("Invalid OK: {}".format(repr(resp)))
     # show signal quality
     sendCommand('AT+CSQ')
-    # resp = threading.Thread(target=serialListen()).start()
-    # ok = threading.Thread(target=serial()).start()
-    # # # print("resp: {}".format(repr(resp)))
+    serialRead()  # get empty lne
+    resp = serialRead()
+    serialRead()  # get empty line
+    ok = serialRead()
     if 'OK' not in ok:
-        print('Unexpected "OK" response: ' + ok)
-        exit(-1)
+        logger.error('Unexpected "OK" response: ' + ok)
+        raise RuntimeError("Invalid OK: {}".format(repr(ok)))
     sendCommand("AT+SBDMTA=0")
-    #if debug:
-        # # print("Signal quality 0-5: " + resp)
+    logger.debug("Signal quality 0-5: " + resp)
     ser.write("AT+SBDREG? \r\n".encode('UTF-8'))
     while True:
         try:
-            regStat = int(ser.readline().decode('UTF-8').split(":")[1])
+            regStat = int(serialRead().split(":")[1])
             break
         except:
             continue
         break
     if regStat != 2:
-         sendCommand("AT+SBDREG")
-    
+        sendCommand("AT+SBDREG")
+
+
 def main():
-    print ("main starting")
+    logger.debug("main starting")
     if len(sys.argv) < 2:
-        print("bad plz use proper - $0 <serialport> <msg>")
+        logger.debug("bad plz use proper - $0 <serialport> <msg>")
         exit(255)
     setup(sys.argv[1])
     t = threading.Thread(target=serialListen, daemon=True)
     t.start()
     doTheOK()
-    print("thonk")
+    logger.debug("thonk")
     send(sys.argv[2])
-    
-    # argument = None
-    # command = None
-    # global port
-    # if len(sys.argv) > 1:
-    #     port = sys.argv[1]
-    # else:
-    #     port = '/dev/ttyUSB0'
-    # setup(port)
-    # if len(sys.argv) < 4:
-    #     # # print("not enough args")
-    #     exit(-1)
-    # else:
-    #     if sys.argv[2] == "message":
-    #         command = sys.argv[3]
-    #         # # print("Message to send: "+command)
-    #     elif sys.argv[2] == "command":
-    #         argument = sys.argv[3]
-    #         # # print("Command to execute: "+argument)
-    #     elif sys.argv[2] == "listen":
-    #         # # print("Listening for Ring")
-    #         threading.Thread(target=serialListen()).start()
-    #     else:
-    #         # # print("argument 3 is not valid, say either command, message or listen")
-    #         exit(-1)
 
-    # #setup(port)
-    # #if debug:
-    #     # # print("Connected to {}".format(ser.name))
-
-    # # clear everything in buffer
-    # #ser.reset_input_buffer()
-    # #ser.reset_output_buffer()
-    # # disable echo
-    # # sendCommand('ATE0', has_resp=True)
-
-    # 
-    # if argument is not None:
-    #     # # print("Sending command: "+argument)
-    #     threading.Thread(target=sendCommand(argument)).start()
-    #     exit(-1)
-    # if command is not None:
-    #     # # print('Sending Message: '+command)
-    #     threading.Thread(target=send(command)).start()
 
 def listenUp():
-    print ("listenUp starting")
+    logger.debug("listenUp starting")
     sendCommand("AT+SBDMTA=1")
-    # ser = serial.Serial(port=port, baudrate = 19200, timeout = 1)
     signalStrength = 0
     ringSetup = 0
     iteration = 0
-    while ringSetup != 2 :
+    while ringSetup != 2:
         ring = ser.readline().decode('UTF-8')
-        # # print(ring)
+        logger.debug(ring)
         if "SBDRING" in ring:
-            bytesLeft=1
-            ser.timeout=120
+            bytesLeft = 1
+            ser.timeout = 120
             while bytesLeft != 0:
                 sendCommand("AT+SBDIXA")
                 resp = "A"
                 while len(resp) < 2:
                     test = ser.readline().decode('UTF-8')
-                    # # #print("Response before Splitting: "+test+"tttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt")
+                    # logger.debug("Response before Splitting: "+test+"tttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt")
                     resp = test.split(': ')
-                # # #print("Response after splitting:  "+resp[1]+" 0 "+resp[0]+" END")
+                    # logger.debug("Response after splitting:  "+resp[1]+" 0 "+resp[0]+" END")
                 try:
                     resp = resp[1].split(', ')
                 except:
-                    # # print("index out of bounds exception \r\n closing program")
-                    exit(-1)
-                bytesLeft= int(resp[0])
-                # # #print("split response: "+resp[1])
-                #bytesLeft = 0
+                    logger.error("index out of bounds exception \r\n closing program")
+                    raise
+                bytesLeft = int(resp[0])
             sendCommand("AT+SBDRT")
-            #while True:
-                #try:
-                    # # #print(ser.readline().decode('UTF-8').split(":")[1])
-
-                    # # #print("done")
-                    #break
-                #except:
-                    #continue
-            ringSetup = 0
-            # # print(ser.readline().decode('UTF-8'))
-            # # print(ser.readline().decode('UTF-8'))
-            # # print(ser.readline().decode('UTF-8'))
-            # # print(ser.readline().decode('UTF-8'))
-            # # print(ser.readline().decode('UTF-8'))
-            # # print(ser.readline().decode('UTF-8'))
             sendCommand("at+sbdmta=0")
             break
-        #ser.flush()
-        # # print("listening...")
+
 
 def send(thingToSend):
-    print ("send starting")
+    logger.debug("send starting")
     # try to send until it sends
     startTime = time.time()
     alert = 2
     while alert == 2:
-        #signal = ser.readline().decode('UTF-8')#empty line
-        #signal = ser.readline().decode('UTF-8')#empty line
         sendCommand("AT+CSQF")
 
-        thonk = serialRead()
-        # signal = threading.Thread(target=listenUp()).start()
-        # # print("last known signal strength: "+signal)
+        serialRead()  # get empty line
+        signal = serialRead()
         # prepare message
         sendCommand("AT+SBDWT=" + thingToSend)
-
         ok = serialRead()
-        emptyLine = serialRead()
-        # ok = threading.Thread(target=listenUp()).start() # get the 'OK'
-        # threading.Thread(target=listenUp()).start()
+        serialRead()
 
         # send message
         sendCommand("AT+SBDI")
-        
-        # resp = threading.Thread(target=listenUp()).start()
         resp = serialRead()
         resp = resp.replace(",", " ").split(" ")
         startTime = time.time()
         currTime = startTime
-
-        #signal = ser.readline().decode('UTF-8')#empty line
-        #signal = ser.readline().decode('UTF-8')#empty line
         while len(resp) > 0 and len(resp) <= 2:
-            # # print(resp)
-            # resp = threading.Thread(target=listenUp()).start()
             resp = serialRead()
             resp = resp.replace(",", " ").split(" ")
             curTime = time.time()
-            if (curTime-startTime)>30:
-                # # print("time out moving on")
+            if (curTime - startTime) > 30:
+                # # logger.debug("time out moving on")
                 break
         # get the rsp
-        
-          #  if debug:
-        # # #print("resp: {}"t )
         try:
-            # # print("*******************" + str(resp))
+            # # logger.debug("*******************" + str(resp))
             alert = int(resp[1])
-            # # print(alert)
+            # # logger.debug(alert)
         except:
-            # # print("********************exception thrown")
+            # # logger.debug("********************exception thrown")
             continue
+    logger.debug("someone messed up their code, exiting")
+    raise RuntimeError("ur bad")
 
-        #if debug:
-            # # #print("alert: {}".format(alert))
-    print("someone messed up their code, exitiing")
-    exit(-1)
 
 if __name__ == '__main__':
     main()
