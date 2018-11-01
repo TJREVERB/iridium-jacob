@@ -167,5 +167,6 @@ def send(thingToSend):
 
 if __name__ == '__main__':
     main()
+    print ("HIII")
 else:
     print ("Main isn't main")
