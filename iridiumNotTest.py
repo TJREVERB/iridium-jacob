@@ -3,7 +3,6 @@ import logging
 import sys
 import threading
 import time
-
 import serial
 
 messageQueue = collections.deque([])
@@ -167,3 +166,5 @@ def send(thingToSend):
 
 if __name__ == '__main__':
     main()
+else:
+    logger.debug("Main isn't main")
