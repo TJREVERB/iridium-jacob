@@ -81,6 +81,7 @@ def doTheOK():
 
 
 def main():
+    print ("Main is starting")
     logger.debug("main starting")
     if len(sys.argv) < 2:
         logger.debug("bad plz use proper - $0 <serialport> <msg>")
