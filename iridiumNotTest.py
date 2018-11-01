@@ -125,6 +125,7 @@ def listenUp():
 
 
 def send(thingToSend):
+    print ("debug isn't working!!!")
     logger.debug("send starting")
     # try to send until it sends
     startTime = time.time()
@@ -167,4 +168,4 @@ def send(thingToSend):
 if __name__ == '__main__':
     main()
 else:
-    logger.debug("Main isn't main")
+    print ("Main isn't main")
