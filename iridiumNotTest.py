@@ -60,6 +60,7 @@ def doTheOK():
     sendCommand("AT")
     logger.warning("gigathonk")
     ser.readline().decode('UTF-8')  # get empty line
+    logger.warning("my part working")
     resp = serialRead()
     logger.warning(resp)
     if 'OK' not in resp:
