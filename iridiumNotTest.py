@@ -10,10 +10,10 @@ logger = logging.getLogger("iridium")
 
 
 def sendCommand(cmd):
-    logger.debug("sendCommand starting")
+    logger.warning("sendCommand starting")
     if cmd[-1] != '\r\n':
         cmd += '\r\n'
-    logger.debug("Sending command: {}".format(cmd))
+    logger.warning("Sending command: {}".format(cmd))
     ser.write(cmd.encode('UTF-8'))
     ser.flush()
     cmd_echo = serialRead()
@@ -27,20 +27,20 @@ def serialListen():
             listenUp()
         else:
             messageQueue.append(line)
-            logger.debug("line added")
+            logger.warning("line added")
 
 
 def serialRead():
-    logger.debug("starting serialRead")
+    logger.warning("starting serialRead")
     while len(messageQueue) < 1:
         time.sleep(0.5)
-        logger.debug("waiting")
-    logger.debug("pop: {}".format(messageQueue))
+        logger.warning("waiting")
+    logger.warning("pop: {}".format(messageQueue))
     return messageQueue.popleft()
 
 
 def setup(port):
-    logger.debug("setup starting")
+    logger.warning("setup starting")
     global ser
     ser = serial.Serial(port=port, baudrate=19200)
     ser.flush()
@@ -48,12 +48,12 @@ def setup(port):
 
 
 def doTheOK():
-    logger.debug("doTheOK starting")
+    logger.warning("doTheOK starting")
     sendCommand("AT")
-    logger.debug("gigathonk")
+    logger.warning("gigathonk")
     serialRead()  # get empty line
     resp = serialRead()
-    logger.debug(resp)
+    logger.warning(resp)
     if 'OK' not in resp:
         logger.error("OK:" + resp)
         raise RuntimeError("Invalid OK: {}".format(repr(resp)))
@@ -67,7 +67,7 @@ def doTheOK():
         logger.error('Unexpected "OK" response: ' + ok)
         raise RuntimeError("Invalid OK: {}".format(repr(ok)))
     sendCommand("AT+SBDMTA=0")
-    logger.debug("Signal quality 0-5: " + resp)
+    logger.warning("Signal quality 0-5: " + resp)
     ser.write("AT+SBDREG? \r\n".encode('UTF-8'))
     while True:
         try:
@@ -81,27 +81,27 @@ def doTheOK():
 
 
 def main():
-    logger.debug("main starting")
+    logger.warning("main starting")
     if len(sys.argv) < 2:
-        logger.debug("bad plz use proper - $0 <serialport> <msg>")
+        logger.warning("bad plz use proper - $0 <serialport> <msg>")
         exit(255)
     setup(sys.argv[1])
     t = threading.Thread(target=serialListen, daemon=True)
     t.start()
     doTheOK()
-    logger.debug("thonk")
+    logger.warning("thonk")
     send(sys.argv[2])
 
 
 def listenUp():
-    logger.debug("listenUp starting")
+    logger.warning("listenUp starting")
     sendCommand("AT+SBDMTA=1")
     signalStrength = 0
     ringSetup = 0
     iteration = 0
     while ringSetup != 2:
         ring = ser.readline().decode('UTF-8')
-        logger.debug(ring)
+        logger.warning(ring)
         if "SBDRING" in ring:
             bytesLeft = 1
             ser.timeout = 120
@@ -110,9 +110,9 @@ def listenUp():
                 resp = "A"
                 while len(resp) < 2:
                     test = ser.readline().decode('UTF-8')
-                    # logger.debug("Response before Splitting: "+test+"tttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt")
+                    # logger.warning("Response before Splitting: "+test+"tttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt")
                     resp = test.split(': ')
-                    # logger.debug("Response after splitting:  "+resp[1]+" 0 "+resp[0]+" END")
+                    # logger.warning("Response after splitting:  "+resp[1]+" 0 "+resp[0]+" END")
                 try:
                     resp = resp[1].split(', ')
                 except:
@@ -125,7 +125,7 @@ def listenUp():
 
 
 def send(thingToSend):
-    logger.debug("send starting")
+    logger.warning("send starting")
     # try to send until it sends
     startTime = time.time()
     alert = 2
@@ -150,17 +150,17 @@ def send(thingToSend):
             resp = resp.replace(",", " ").split(" ")
             curTime = time.time()
             if (curTime - startTime) > 30:
-                # # logger.debug("time out moving on")
+                # # logger.warning("time out moving on")
                 break
         # get the rsp
         try:
-            # # logger.debug("*******************" + str(resp))
+            # # logger.warning("*******************" + str(resp))
             alert = int(resp[1])
-            # # logger.debug(alert)
+            # # logger.warning(alert)
         except:
-            # # logger.debug("********************exception thrown")
+            # # logger.warning("********************exception thrown")
             continue
-    logger.debug("someone messed up their code, exiting")
+    logger.warning("someone messed up their code, exiting")
     raise RuntimeError("ur bad")
 
 
