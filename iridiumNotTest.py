@@ -38,6 +38,14 @@ def serialRead():
     logger.warning("pop: {}".format(messageQueue))
     return messageQueue.popleft()
 
+def serialReadSingular():
+    logger.warning("starting serialRead")
+    if len(messageQueue) < 1:
+        logger.warning("nothing there")
+    else:
+        logger.warning("pop: {}".format(messageQueue))
+    return messageQueue.popleft()
+
 
 def setup(port):
     logger.warning("setup starting")
@@ -51,7 +59,7 @@ def doTheOK():
     logger.warning("doTheOK starting")
     sendCommand("AT")
     logger.warning("gigathonk")
-    serialRead()  # get empty line
+    ser.readline().decode('UTF-8')  # get empty line
     resp = serialRead()
     logger.warning(resp)
     if 'OK' not in resp:
@@ -59,9 +67,9 @@ def doTheOK():
         raise RuntimeError("Invalid OK: {}".format(repr(resp)))
     # show signal quality
     sendCommand('AT+CSQ')
-    serialRead()  # get empty lne
+    ser.readline().decode('UTF-8') # get empty lne
     resp = serialRead()
-    serialRead()  # get empty line
+    ser.readline().decode('UTF-8')  # get empty line
     ok = serialRead()
     if 'OK' not in ok:
         logger.error('Unexpected "OK" response: ' + ok)
@@ -132,12 +140,12 @@ def send(thingToSend):
     while alert == 2:
         sendCommand("AT+CSQF")
 
-        serialRead()  # get empty line
+        ser.readline().decode('UTF-8')  # get empty line
         signal = serialRead()
         # prepare message
         sendCommand("AT+SBDWT=" + thingToSend)
         ok = serialRead()
-        serialRead()
+        ser.readline().decode('UTF-8')
 
         # send message
         sendCommand("AT+SBDI")
