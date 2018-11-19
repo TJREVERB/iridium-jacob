@@ -16,7 +16,7 @@ def sendCommand(cmd):
     logger.warning("Sending command: {}".format(cmd))
     ser.write(cmd.encode('UTF-8'))
     ser.flush()
-    cmd_echo = serialRead()
+    # cmd_echo = serialRead()
 
 
 def serialListen():
