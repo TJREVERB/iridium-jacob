@@ -18,7 +18,7 @@ def setup(port):
     
 
     logger.warning("now checking")
-	sendCommand("AT")
+    sendCommand("AT")
     ser.readline().decode('UTF-8') # get the empty line
     resp = ser.readline().decode('UTF-8') # check for OK
     if 'OK' not in resp:
