@@ -101,7 +101,7 @@ def listen():
                 resp = "A"
                 while len(resp) < 2:
                     test = ser.readline().decode('UTF-8')
-                     logger.warning("Response before Splitting: "+test)
+                    logger.warning("Response before Splitting: "+test)
                     resp = test.split(': ')
                     logger.warning("Response after splitting:  "+resp[1]+" "+resp[0]+" END")
                 try:
