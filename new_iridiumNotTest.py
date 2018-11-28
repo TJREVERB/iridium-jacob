@@ -80,6 +80,11 @@ def send(message):
 
 
 def listen():
+    if len(sys.argv) < 1:
+        logger.warning("No args")
+        exit(255)
+    if not ser:
+        setup(port='/dev/ttyUSB0')
     logger.warning("listenUp starting")
     sendCommand("AT+SBDMTA=1")
     signalStrength = 0
