@@ -24,6 +24,7 @@ def setup(port):
     if 'OK' not in resp:
         logger.error("OK:" + resp)
         exit(-1)
+    logger.warning("checking finished")
 
 
 def sendCommand(cmd):
@@ -113,3 +114,6 @@ def listen():
             sendCommand("AT+SBDRT")
             sendCommand("at+sbdmta=0")
             break
+
+setup(sys.argv[1])
+send(sys.argv[2])
