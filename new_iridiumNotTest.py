@@ -36,16 +36,16 @@ def sendCommand(cmd):
 
 
 def send(message):
-	transmitting=True
-	alert=2
-	if len(sys.argv) < 1:
+    transmitting=True
+    alert=2
+    if len(sys.argv) < 1:
         logger.warning("No args")
         exit(255)
-	if not ser:
-		setup(port='/dev/ttyUSB0')
+    if not ser:
+        setup(port='/dev/ttyUSB0')
 
-	while alert==2:
-		sendCommand("AT+CSQF")
+    while alert==2:
+        sendCommand("AT+CSQF")
 
         ser.readline().decode('UTF-8') # get the empty line
         signal = ser.readline().decode('UTF-8')
