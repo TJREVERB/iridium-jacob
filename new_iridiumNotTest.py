@@ -149,6 +149,6 @@ def listen():
             sendCommand("at+sbdmta=0")
             break
 
-threading.Thread(target=checksend()).start()
 setup(sys.argv[1])
+threading.Thread(target=checksend()).start()
 threading.Thread(target=listen()).start()
