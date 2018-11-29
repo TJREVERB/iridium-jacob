@@ -30,36 +30,37 @@ def setup(port):
     logger.warning("setup finished, all good")
     
 
-    logger.warning("doTheOK starting")
     sendCommand("AT")
-    logger.warning("gigathonk")
-    serialRead()  # get empty line
-    resp = serialRead()
-    logger.warning(resp)
+    ser.readline().decode('UTF-8') # get the empty line
+    resp = ser.readline().decode('UTF-8')
+    # # print (resp)
     if 'OK' not in resp:
-        logger.error("OK:" + resp)
-        raise RuntimeError("Invalid OK: {}".format(repr(resp)))
+        # # print("Echo"+resp)
+        exit(-1)
+
     # show signal quality
     sendCommand('AT+CSQ')
-    serialRead()  # get empty lne
-    resp = serialRead()
-    serialRead()  # get empty line
-    ok = serialRead()
+    ser.readline().decode('UTF-8') # get the empty line
+    resp = ser.readline().decode('UTF-8')
+    ser.readline().decode('UTF-8') # get the empty line
+    ok = ser.readline().decode('UTF-8') # get the 'OK'
+    # # # print("resp: {}".format(repr(resp)))
     if 'OK' not in ok:
-        logger.error('Unexpected "OK" response: ' + ok)
-        raise RuntimeError("Invalid OK: {}".format(repr(ok)))
+        # # print('Unexpected "OK" response: ' + ok)
+        exit(-1)
     sendCommand("AT+SBDMTA=0")
-    logger.warning("Signal quality 0-5: " + resp)
+    #if debug:
+        # # print("Signal quality 0-5: " + resp)
     ser.write("AT+SBDREG? \r\n".encode('UTF-8'))
     while True:
         try:
-            regStat = int(serialRead().split(":")[1])
+            regStat = int(ser.readline().decode('UTF-8').split(":")[1])
             break
         except:
             continue
         break
     if regStat != 2:
-        sendCommand("AT+SBDREG")
+         sendCommand("AT+SBDREG")
 
 
 def sendCommand(cmd):
