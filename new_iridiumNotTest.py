@@ -30,14 +30,36 @@ def setup(port):
     logger.warning("setup finished, all good")
     
 
-    logger.warning("now checking")
+    logger.warning("doTheOK starting")
     sendCommand("AT")
-    ser.readline().decode('UTF-8') # get the empty line
-    resp = ser.readline().decode('UTF-8') # check for OK
+    logger.warning("gigathonk")
+    serialRead()  # get empty line
+    resp = serialRead()
+    logger.warning(resp)
     if 'OK' not in resp:
         logger.error("OK:" + resp)
-        exit(-1)
-    logger.warning("checking finished")
+        raise RuntimeError("Invalid OK: {}".format(repr(resp)))
+    # show signal quality
+    sendCommand('AT+CSQ')
+    serialRead()  # get empty lne
+    resp = serialRead()
+    serialRead()  # get empty line
+    ok = serialRead()
+    if 'OK' not in ok:
+        logger.error('Unexpected "OK" response: ' + ok)
+        raise RuntimeError("Invalid OK: {}".format(repr(ok)))
+    sendCommand("AT+SBDMTA=0")
+    logger.warning("Signal quality 0-5: " + resp)
+    ser.write("AT+SBDREG? \r\n".encode('UTF-8'))
+    while True:
+        try:
+            regStat = int(serialRead().split(":")[1])
+            break
+        except:
+            continue
+        break
+    if regStat != 2:
+        sendCommand("AT+SBDREG")
 
 
 def sendCommand(cmd):
