@@ -8,6 +8,7 @@ import serial
 messageQueue = collections.deque([])
 logger = logging.getLogger("iridium")
 transmitting=0
+ser=None
 
 def checksend():
     logger.warning("checking starting")
@@ -54,7 +55,7 @@ def send(message):
     if len(sys.argv) < 2:
         logger.warning("Not enough args")
         exit(255)
-    if not ser:
+    if ser==None:
         setup(port='/dev/ttyUSB0')
 
     while alert==2:
@@ -97,7 +98,7 @@ def listen():
     if len(sys.argv) < 1:
         logger.warning("No args")
         exit(255)
-    if not ser:
+    if ser==None:
         setup(port='/dev/ttyUSB0')
     logger.warning("listen starting")
     sendCommand("AT+SBDMTA=1")
