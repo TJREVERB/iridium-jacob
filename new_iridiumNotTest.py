@@ -46,9 +46,6 @@ def setup(port):
     ser.readline().decode('UTF-8') # get the empty line
     ok = ser.readline().decode('UTF-8') # get the 'OK'
     # # # print("resp: {}".format(repr(resp)))
-    if 'OK' not in ok:
-        # # print('Unexpected "OK" response: ' + ok)
-        exit(-1)
     sendCommand("AT+SBDMTA=0")
     #if debug:
         # # print("Signal quality 0-5: " + resp)
