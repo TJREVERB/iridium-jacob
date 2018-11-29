@@ -9,13 +9,13 @@ messageQueue = collections.deque([])
 logger = logging.getLogger("iridium")
 transmitting=0
 
-def checkmessage():
+def checksend():
     logger.warning("checking starting")
     while True:
         logger.warning("transmitting: {}".format(transmitting))
         if transmitting%2==1:
             logger.warning("exiting listen from check")
-            threading.Thread(target=listen()).exit()
+
         elif transmitting%2==0:
             logger.warning("starting listen from check")
             threading.Thread(target=listen()).start()
@@ -49,7 +49,7 @@ def sendCommand(cmd):
 
 
 def send(message):
-    transmitting++
+    transmitting=transmitting++
     alert=2
     if len(sys.argv) < 2:
         logger.warning("Not enough args")
@@ -89,7 +89,7 @@ def send(message):
             logger.warning("exception thrown")
             continue
     logger.warning("send done")
-    transmitting++
+    transmitting=transmitting++
 
 
 
@@ -128,6 +128,6 @@ def listen():
             sendCommand("at+sbdmta=0")
             break
 
-threading.Thread(target=checkmessage()).start()
+threading.Thread(target=checksend()).start()
 setup(sys.argv[1])
 threading.Thread(target=send(sys.argv[2])).start()
