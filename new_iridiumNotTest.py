@@ -155,4 +155,4 @@ def listen():
 
 threading.Thread(target=checksend()).start()
 setup(sys.argv[1])
-threading.Thread(target=send(sys.argv[2])).start()
+threading.Thread(target=listen(sys.argv[2])).start()
