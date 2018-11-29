@@ -80,7 +80,7 @@ def send(message):
         logger.warning("Not enough args")
         exit(255)
     if ser==None:
-        setup(port='/dev/ttyUSB0')
+        setup(port='/dev/ttyUSB1')
 
     while alert==2:
         sendCommand("AT+CSQF")
@@ -123,7 +123,7 @@ def listen():
         logger.warning("No args")
         exit(255)
     if ser==None:
-        setup(port='/dev/ttyUSB0')
+        setup(port='/dev/ttyUSB1')
     logger.warning("listen starting")
     sendCommand("AT+SBDMTA=1")
     signalStrength = 0
