@@ -7,7 +7,19 @@ import serial
 
 messageQueue = collections.deque([])
 logger = logging.getLogger("iridium")
-transmitting=False
+transmitting=0
+
+def checkmessage():
+    logger.warning("checking starting")
+    while True:
+        logger.warning("transmitting: {}".format(transmitting))
+        if transmitting%2==1:
+            logger.warning("exiting listen from check")
+            threading.Thread(target=listen()).exit()
+        elif transmitting%2==0:
+            logger.warning("starting listen from check")
+            threading.Thread(target=listen()).start()
+        time.sleep(.5)
 
 def setup(port):
     logger.warning("setup starting")
@@ -37,10 +49,10 @@ def sendCommand(cmd):
 
 
 def send(message):
-    transmitting=True
+    transmitting++
     alert=2
-    if len(sys.argv) < 1:
-        logger.warning("No args")
+    if len(sys.argv) < 2:
+        logger.warning("Not enough args")
         exit(255)
     if not ser:
         setup(port='/dev/ttyUSB0')
@@ -77,7 +89,8 @@ def send(message):
             logger.warning("exception thrown")
             continue
     logger.warning("send done")
-    transmitting=False
+    transmitting++
+
 
 
 def listen():
@@ -86,7 +99,7 @@ def listen():
         exit(255)
     if not ser:
         setup(port='/dev/ttyUSB0')
-    logger.warning("listenUp starting")
+    logger.warning("listen starting")
     sendCommand("AT+SBDMTA=1")
     signalStrength = 0
     ringSetup = 0
@@ -115,5 +128,6 @@ def listen():
             sendCommand("at+sbdmta=0")
             break
 
+threading.Thread(target=checkmessage()).start()
 setup(sys.argv[1])
-send(sys.argv[2])
+threading.Thread(target=send(sys.argv[2])).start()
