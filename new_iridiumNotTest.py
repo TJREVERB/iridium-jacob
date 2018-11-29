@@ -8,19 +8,6 @@ import serial
 messageQueue = collections.deque([])
 logger = logging.getLogger("iridium")
 transmitting=0
-ser=None
-
-def checksend():
-    logger.warning("checking starting")
-    while True:
-        logger.warning("transmitting: {}".format(transmitting))
-        if transmitting%2==1:
-            logger.warning("exiting listen from check")
-
-        elif transmitting%2==0:
-            logger.warning("starting listen from check")
-            threading.Thread(target=listen()).start()
-        time.sleep(.5)
 
 def setup(port):
     logger.warning("setup starting")
@@ -28,8 +15,6 @@ def setup(port):
     ser = serial.Serial(port=port, baudrate=19200)
     ser.flush()
     logger.warning("setup finished, all good")
-    
-
     sendCommand("AT")
     ser.readline().decode('UTF-8') # get the empty line
     resp = ser.readline().decode('UTF-8')
@@ -60,46 +45,58 @@ def sendCommand(cmd):
     ser.flush()
 
 
-def send(message):
-    transmitting=transmitting+1
-    alert=2
-    if len(sys.argv) < 2:
-        logger.warning("Not enough args")
-        exit(255)
 
-    while alert==2:
+    
+def send(thingToSend):
+    # try to send until it sends
+    startTime = time.time()
+    alert = 2
+    while alert == 2:
+        #signal = ser.readline().decode('UTF-8')#empty line
+        #signal = ser.readline().decode('UTF-8')#empty line
         sendCommand("AT+CSQF")
 
-        ser.readline().decode('UTF-8') # get the empty line
+        signal = ser.readline().decode('UTF-8')#empty line
         signal = ser.readline().decode('UTF-8')
+        # # print("last known signal strength: "+signal)
         # prepare message
         sendCommand("AT+SBDWT=" + thingToSend)
-        ok = ser.readline().decode('UTF-8')
+        ok = ser.readline().decode('UTF-8') # get the 'OK'
         ser.readline().decode('UTF-8') # get the empty line
 
         # send message
         sendCommand("AT+SBDI")
+        
         resp = ser.readline().decode('UTF-8') # get the empty line
         resp = resp.replace(",", " ").split(" ")
         startTime = time.time()
         currTime = startTime
 
+        #signal = ser.readline().decode('UTF-8')#empty line
+        #signal = ser.readline().decode('UTF-8')#empty line
         while len(resp) > 0 and len(resp) <= 2:
-            resp = ser.readline().decode('UTF-8')
+            # # print(resp)
+            resp = ser.readline().decode('UTF-8')    
             resp = resp.replace(",", " ").split(" ")
-            currTime = time.time()
-            if (currTime - startTime) > 30:
-                logger.warning("timed out moving on")
+            curTime = time.time()
+            if (curTime-startTime)>30:
+                # # print("time out moving on")
                 break
         # get the rsp
+        
+          #  if debug:
+        # # #print("resp: {}"t )
         try:
+            # # print("*******************" + str(resp))
             alert = int(resp[1])
-            logger.warning("alert:"+alert)
+            # # print(alert)
         except:
-            logger.warning("exception thrown")
+            # # print("********************exception thrown")
             continue
-    logger.warning("send done")
-    transmitting=transmitting+1
+
+        #if debug:
+            # # #print("alert: {}".format(alert))
+    exit(-1)
 
 
 
@@ -137,5 +134,4 @@ def listen():
             break
 
 setup(sys.argv[1])
-threading.Thread(target=checksend()).start()
-threading.Thread(target=listen()).start()
+send(sys.argv[2])
