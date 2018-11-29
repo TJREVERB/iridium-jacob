@@ -49,7 +49,7 @@ def sendCommand(cmd):
 
 
 def send(message):
-    transmitting=transmitting++
+    transmitting=transmitting+1
     alert=2
     if len(sys.argv) < 2:
         logger.warning("Not enough args")
@@ -89,7 +89,7 @@ def send(message):
             logger.warning("exception thrown")
             continue
     logger.warning("send done")
-    transmitting=transmitting++
+    transmitting=transmitting+1
 
 
 
