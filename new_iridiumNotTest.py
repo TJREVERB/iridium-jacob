@@ -35,17 +35,7 @@ def setup(port):
     resp = ser.readline().decode('UTF-8')
     logger.warning(resp)
     # # print (resp)
-    if 'OK' not in resp:
-        # # print("Echo"+resp)
-        exit(-1)
 
-    # show signal quality
-    sendCommand('AT+CSQ')
-    ser.readline().decode('UTF-8') # get the empty line
-    resp = ser.readline().decode('UTF-8')
-    ser.readline().decode('UTF-8') # get the empty line
-    ok = ser.readline().decode('UTF-8') # get the 'OK'
-    # # # print("resp: {}".format(repr(resp)))
     sendCommand("AT+SBDMTA=0")
     #if debug:
         # # print("Signal quality 0-5: " + resp)
