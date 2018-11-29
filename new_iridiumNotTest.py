@@ -31,6 +31,8 @@ def setup(port):
     
 
     sendCommand("AT")
+    ser.readline().decode('UTF-8') # get the empty line
+    logger.warning(resp)
     resp = ser.readline().decode('UTF-8')
     # # print (resp)
     if 'OK' not in resp:
