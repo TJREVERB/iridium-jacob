@@ -10,17 +10,27 @@ logger = logging.getLogger("iridium")
 transmitting=0
 
 def setup(port):
-    logger.warning("setup starting")
     global ser
-    ser = serial.Serial(port=port, baudrate=19200)
-    ser.flush()
-    logger.warning("setup finished, all good")
+    ser = serial.Serial(port=port, baudrate = 19200, timeout = 15)
+    ser.flush()    
+
     sendCommand("AT")
     ser.readline().decode('UTF-8') # get the empty line
     resp = ser.readline().decode('UTF-8')
-    logger.warning(resp)
     # # print (resp)
-
+    if 'OK' not in resp:
+        # # print("Echo"+resp)
+        exit(-1)
+    # show signal quality
+    sendCommand('AT+CSQ')
+    ser.readline().decode('UTF-8') # get the empty line
+    resp = ser.readline().decode('UTF-8')
+    ser.readline().decode('UTF-8') # get the empty line
+    ok = ser.readline().decode('UTF-8') # get the 'OK'
+    # # # print("resp: {}".format(repr(resp)))
+    if 'OK' not in ok:
+        # # print('Unexpected "OK" response: ' + ok)
+        exit(-1)
     sendCommand("AT+SBDMTA=0")
     #if debug:
         # # print("Signal quality 0-5: " + resp)
