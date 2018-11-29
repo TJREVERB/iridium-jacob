@@ -207,7 +207,7 @@ if __name__ == '__main__':
         exit(-1)
     try:
         # # print(len(sys.argv))
-        main()
+        on_Startup()
     finally:
         # sendCommand('ATE1', has_resp=False)
         pass
