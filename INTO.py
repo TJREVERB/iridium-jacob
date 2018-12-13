@@ -184,9 +184,9 @@ def send(thingToSend):
             resp = ser.readline().decode('UTF-8')    
             resp = resp.replace(",", " ").split(" ")
             curTime = time.time()
-            if (curTime-startTime)>30:
+            #if (curTime-startTime)>30:
                 #print("time out moving on")
-                break
+                #break
         #get the rsp
         
           #  if debug:
