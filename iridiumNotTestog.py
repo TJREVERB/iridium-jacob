@@ -42,7 +42,7 @@ def doTheOK():
     if 'OK' not in ok:
         # # print('Unexpected "OK" response: ' + ok)
         exit(-1)
-    sendCommand("AT+SBDMTA=0")
+    sendCommand("AT+SBDMTA=1")
     #if debug:
         # # print("Signal quality 0-5: " + resp)
     ser.write("AT+SBDREG? \r\n".encode('UTF-8'))
