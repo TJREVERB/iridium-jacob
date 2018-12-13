@@ -55,7 +55,7 @@ def doTheOK():
         break
     if regStat != 2:
         print ("regstat isnt what it should be")
-         sendCommand("AT+SBDREG")
+        sendCommand("AT+SBDREG")
     
 def on_Startup():
     argument = " "
