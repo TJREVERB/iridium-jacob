@@ -65,22 +65,7 @@ def on_Startup():
     else:
         port = '/dev/ttyUSB0'
     setup(port)
-    if len(sys.argv) < 4:
-        # # print("not enought args")
-        exit(-1)
-    else:
-        if sys.argv[2] == "message":
-            command = sys.argv[3]
-            # # print("Message to send: "+command)
-        elif sys.argv[2] == "command":
-            argument = sys.argv[3]
-            # # print("Command to execute: "+argument)
-        elif sys.argv[2] == "listen":
-            # # print("Listening for Ring")
-            listenUp.start()
-        else:
-            # # print("argument 3 is not valid, say either command, message or listen")
-            exit(-1)
+
 
     #setup(port)
     #if debug:
@@ -93,13 +78,7 @@ def on_Startup():
     # sendCommand('ATE0', has_resp=True)
 
     
-    if ' ' not in argument:
-        # # print("Sending command: "+argument)
-        sendCommand(argument)
-        exit(-1)
-    if ' ' not in command:
-        # # print('Sending Message: '+command)
-        send(command).start()
+
 def listenUp():
     sendCommand("AT+SBDMTA=1")
     ser = serial.Serial(port=port, baudrate = 19200, timeout = 1)
@@ -201,14 +180,6 @@ def send(thingToSend):
     exit(-1)
 
 if __name__ == '__main__':
-    if len(sys.argv) < 4:
-        # # print(len(sys.argv))
-        # # print("Usage: $0 <serial port> <command or message or listenUp> <text to send or command>")
-        exit(-1)
-    try:
-        # # print(len(sys.argv))
-        on_Startup()
-    finally:
-        # sendCommand('ATE1', has_resp=False)
-        pass
-
+    on_startup()
+    time.sleep(10)
+    send("hello world").start()
