@@ -42,7 +42,7 @@ def doTheOK():
     if 'OK' not in ok:
         # # print('Unexpected "OK" response: ' + ok)
         exit(-1)
-    sendCommand("AT+SBDMTA=1")
+    sendCommand("AT+SBDMTA=0")
     #if debug:
         # # print("Signal quality 0-5: " + resp)
     ser.write("AT+SBDREG? \r\n".encode('UTF-8'))
@@ -80,15 +80,15 @@ def on_Startup():
     
 
 def listenUp():
-    sendCommand("AT+SBDMTA=1")
     ser = serial.Serial(port=port, baudrate = 19200, timeout = 1)
+    sendCommand("AT+SBDMTA=1")
     signalStrength = 0
     ringSetup = 0
     iteration = 0
     while ringSetup != 2 :
         print ("Just inside ring setup loop")
         ring = ser.readline().decode('UTF-8')
-        # # print(ring)
+        print(ring)
         print ("if SBDRING next")
         if "SBDRING" in ring:
             bytesLeft=1
