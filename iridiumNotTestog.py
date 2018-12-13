@@ -86,28 +86,34 @@ def listenUp():
     ringSetup = 0
     iteration = 0
     while ringSetup != 2 :
+        print ("Just inside ring setup loop")
         ring = ser.readline().decode('UTF-8')
         # # print(ring)
+        print ("if SBDRING next")
         if "SBDRING" in ring:
             bytesLeft=1
             ser.timeout=120
             while bytesLeft != 0:
+                print ("checking bytes left")
                 sendCommand("AT+SBDIXA")
                 resp = "A"
                 while len(resp) < 2:
+                    print ("response length loop")
                     test = ser.readline().decode('UTF-8')
                     # # #print("Response before Splitting: "+test+"tttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt")
                     resp = test.split(': ')
                 # # #print("Response after splitting:  "+resp[1]+" 0 "+resp[0]+" END")
                 try:
+                    print ("splitting response")
                     resp = resp[1].split(', ')
                 except:
-                    # # print("index out of bounds exception \r\n closing program")
+                    print("index out of bounds exception \r\n closing program")
                     exit(-1)
                 bytesLeft= int(resp[0])
                 # # #print("split response: "+resp[1])
                 #bytesLeft = 0
             sendCommand("AT+SBDRT")
+            print ("About to show message")
             while True:
                 try:
                     print(ser.readline().decode('UTF-8').split(":")[1])
