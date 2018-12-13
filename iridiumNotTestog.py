@@ -180,6 +180,6 @@ def send(thingToSend):
     exit(-1)
 
 if __name__ == '__main__':
-    on_startup()
+    on_Startup()
     time.sleep(10)
     send("hello world").start()
