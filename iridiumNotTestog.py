@@ -108,14 +108,14 @@ def listenUp():
                 # # #print("split response: "+resp[1])
                 #bytesLeft = 0
             sendCommand("AT+SBDRT")
-            #while True:
-                #try:
-                    # # #print(ser.readline().decode('UTF-8').split(":")[1])
+            while True:
+                try:
+                    print(ser.readline().decode('UTF-8').split(":")[1])
 
-                    # # #print("done")
-                    #break
-                #except:
-                    #continue
+                    print("done")
+                    break
+                except:
+                    continue
             ringSetup = 0
             # # print(ser.readline().decode('UTF-8'))
             # # print(ser.readline().decode('UTF-8'))
@@ -123,10 +123,10 @@ def listenUp():
             # # print(ser.readline().decode('UTF-8'))
             # # print(ser.readline().decode('UTF-8'))
             # # print(ser.readline().decode('UTF-8'))
-            sendCommand("at+sbdmta=0")
-            break
+            #sendCommand("at+sbdmta=0")
         #ser.flush()
         # # print("listening...")
+
 
 def send(thingToSend):
     # try to send until it sends
