@@ -182,4 +182,4 @@ def send(thingToSend):
 if __name__ == '__main__':
     on_Startup()
     time.sleep(10)
-    send("hello world").start()
+    listenUp()
