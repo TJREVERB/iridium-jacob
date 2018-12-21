@@ -187,7 +187,6 @@ def send(thingToSend):
     exit(-1)
 
 if __name__ == '__main__':
-    msg= raw_input('message: ')
     on_Startup()
     time.sleep(10)
-    send()
+    send('hi')
