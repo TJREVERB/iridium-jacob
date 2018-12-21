@@ -8,6 +8,7 @@ import serial
 messageQueue = collections.deque([])
 logger = logging.getLogger("iridium")
 transmitting=0
+debug = True
 
 def setup(port):
     global ser

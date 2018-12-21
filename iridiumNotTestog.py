@@ -11,12 +11,12 @@ def sendCommand(cmd):
     if cmd[-1] != '\r\n':
         cmd += '\r\n'
     #if debug:
-        # # # print("Sending command: {}".format(cmd))
+        # print("Sending command: {}".format(cmd))
     ser.write(cmd.encode('UTF-8'))
     ser.flush()
     cmd_echo = ser.readline()
     #if debug:
-        # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # print("Echoed: " + cmd_echo.decode('UTF-8'))
+        # print("Echoed: " + cmd_echo.decode('UTF-8'))
 def setup(port):
     global ser
     ser = serial.Serial(port=port, baudrate = 19200, timeout = 15)
@@ -40,11 +40,11 @@ def doTheOK():
     ok = ser.readline().decode('UTF-8') # get the 'OK'
     # # # print("resp: {}".format(repr(resp)))
     if 'OK' not in ok:
-        # # print('Unexpected "OK" response: ' + ok)
+        # print('Unexpected "OK" response: ' + ok)
         exit(-1)
     sendCommand("AT+SBDMTA=0")
     #if debug:
-        # # print("Signal quality 0-5: " + resp)
+        # print("Signal quality 0-5: " + resp)
     ser.write("AT+SBDREG? \r\n".encode('UTF-8'))
     while True:
         try:
@@ -73,8 +73,8 @@ def on_Startup():
         # # print("Connected to {}".format(ser.name))
 
     # clear everything in buffer
-    #ser.reset_input_buffer()
-    #ser.reset_output_buffer()
+    # ser.reset_input_buffer()
+    # ser.reset_output_buffer()
     # disable echo
     # sendCommand('ATE0', has_resp=True)
 
@@ -101,9 +101,9 @@ def listenUp():
                 while len(resp) < 2:
                     print ("response length loop")
                     test = ser.readline().decode('UTF-8')
-                    # # #print("Response before Splitting: "+test+"tttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt")
+                    # print("Response before Splitting: "+test)
                     resp = test.split(': ')
-                # # #print("Response after splitting:  "+resp[1]+" 0 "+resp[0]+" END")
+                # print("Response after splitting:  "+resp[1]+" 0 "+resp[0]+" END")
                 try:
                     print ("splitting response")
                     resp = resp[1].split(', ')
@@ -111,7 +111,7 @@ def listenUp():
                     print("index out of bounds exception \r\n closing program")
                     exit(-1)
                 bytesLeft= int(resp[0])
-                # # #print("split response: "+resp[1])
+                # print("split response: "+resp[1])
                 #bytesLeft = 0
             sendCommand("AT+SBDRT")
             print ("About to show message")
@@ -124,15 +124,15 @@ def listenUp():
                 except:
                     continue
             ringSetup = 0
-            # # print(ser.readline().decode('UTF-8'))
-            # # print(ser.readline().decode('UTF-8'))
-            # # print(ser.readline().decode('UTF-8'))
-            # # print(ser.readline().decode('UTF-8'))
-            # # print(ser.readline().decode('UTF-8'))
-            # # print(ser.readline().decode('UTF-8'))
+            # print(ser.readline().decode('UTF-8'))
+            # print(ser.readline().decode('UTF-8'))
+            # print(ser.readline().decode('UTF-8'))
+            # print(ser.readline().decode('UTF-8'))
+            # print(ser.readline().decode('UTF-8'))
+            # print(ser.readline().decode('UTF-8'))
             #sendCommand("at+sbdmta=0")
         #ser.flush()
-        # # print("listening...")
+        # print("listening...")
 
 
 def send(thingToSend):
@@ -146,7 +146,7 @@ def send(thingToSend):
 
         signal = ser.readline().decode('UTF-8')#empty line
         signal = ser.readline().decode('UTF-8')
-        # # print("last known signal strength: "+signal)
+        # print("last known signal strength: "+signal)
         # prepare message
         sendCommand("AT+SBDWT=" + thingToSend)
         ok = ser.readline().decode('UTF-8') # get the 'OK'
@@ -168,25 +168,26 @@ def send(thingToSend):
             resp = resp.replace(",", " ").split(" ")
             curTime = time.time()
             if (curTime-startTime)>30:
-                # # print("time out moving on")
+                # print("time out moving on")
                 break
         # get the rsp
         
           #  if debug:
-        # # #print("resp: {}"t )
+        # print("resp: {}"t )
         try:
-            # # print("*******************" + str(resp))
+            # print("*" + str(resp))
             alert = int(resp[1])
-            # # print(alert)
+            # print(alert)
         except:
-            # # print("********************exception thrown")
+            # print("***exception thrown")
             continue
 
         #if debug:
-            # # #print("alert: {}".format(alert))
+            # print("alert: {}".format(alert))
     exit(-1)
 
 if __name__ == '__main__':
+    msg= raw_input('message: ')
     on_Startup()
     time.sleep(10)
-    send("hello world")
+    send()
