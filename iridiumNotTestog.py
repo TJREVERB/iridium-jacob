@@ -4,7 +4,7 @@ import time
 import sys
 import logging
 
-logger = logging.getLogger("iridium")
+logger = logging.getLogger('iridium')
 
 debug = True
 
@@ -58,7 +58,6 @@ def doTheOK():
             continue
         break
     if regStat != 2:
-        print ("regstat isnt what it should be")
         sendCommand("AT+SBDREG")
     
 def on_Startup():
