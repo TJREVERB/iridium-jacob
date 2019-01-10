@@ -186,7 +186,6 @@ def send(thingToSend):
             # print("alert: {}".format(alert))
     exit(-1)
 
-if __name__ == '__main__':
-    on_Startup()
-    time.sleep(10)
-    send('hi')
+on_Startup()
+time.sleep(10)
+send('hi')
