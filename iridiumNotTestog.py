@@ -4,7 +4,7 @@ import time
 import sys
 import logging
 
-logger = logging.getLogger("iridium")
+logger = logging.getLogger()
 
 debug = True
 
