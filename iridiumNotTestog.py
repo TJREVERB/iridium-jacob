@@ -2,6 +2,9 @@ import threading
 import serial
 import time
 import sys
+import logging
+
+logger = logging.getLogger("iridium")
 
 debug = True
 
@@ -18,6 +21,7 @@ def sendCommand(cmd):
     #if debug:
         # print("Echoed: " + cmd_echo.decode('UTF-8'))
 def setup(port):
+    logger.warning("setup starting")
     global ser
     ser = serial.Serial(port=port, baudrate = 19200, timeout = 15)
     ser.flush()
