@@ -4,8 +4,6 @@ import time
 import sys
 import logging
 
-logger = logging.getLogger('iridium')
-
 debug = True
 
 global ser
